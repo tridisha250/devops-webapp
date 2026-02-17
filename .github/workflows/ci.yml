@@ -10,15 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-    - name: Checkout Code
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: List Files
-      run: ls -la
+    - name: Show files
+      run: ls
 
-    - name: Validate HTML
-      run: echo "HTML validation simulated"
+    - name: Build simulation
+      run: echo "Website build completed successfully"
 
-    - name: Build Complete
-      run: echo "Build Successful"
+    - name: Slack Success Notification
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"✅ DevOps Pipeline: Build Successful & Site Updated"}' \
+        ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Slack Failure Notification
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"❌ DevOps Pipeline: Build Failed"}' \
+        ${{ secrets.SLACK_WEBHOOK }}
